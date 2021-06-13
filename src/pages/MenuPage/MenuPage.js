@@ -95,14 +95,14 @@ const ProductContainer = styled.section`
     background: rgba(255, 255, 255, 0.7);
     margin: 20px 10px;
     border-radius: 5px;
-    padding-top: 50px;
+    padding-top: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
 `;
 const ProductImg = styled.img`
     width: 90%;
-    height: 200px;
+    height: 400px;
     background: url(${(props) => props.$img}) no-repeat center/cover;;
 `;
 
