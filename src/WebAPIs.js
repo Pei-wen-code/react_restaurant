@@ -1,6 +1,7 @@
 import { getAuthToken } from './utils';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://agile-taiga-49676.herokuapp.com';
+// const BASE_URL = 'http://localhost:5000';
 
 // login, register and user authentication
 export const register = (username, email, password) => {
