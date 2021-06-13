@@ -30,7 +30,7 @@ export default function Footer() {
           Contact us：01-1234-5678 <br />
           Opening hours：Tuesday ~ Sunday 11:00~22:00
           <br />
-          email：shoroboo525@gmail.com
+          email：123abc456def@gmail.com
           <br />
         </ResturantInfo>
       </FooterTop>
