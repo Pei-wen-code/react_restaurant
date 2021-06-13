@@ -118,7 +118,6 @@ const UserInfoContainer = styled.form`
     flex-direction: column;
     flex-wrap: wrap;
     align-items: center;
-    border-radius: 8px;
 `;
 
 const UserInfo = styled.div`
@@ -322,6 +321,7 @@ export default function MyReserve() {
                     {editMode && <Input value={email} onChange={(e) => setEmail(e.target.value)} onFocus={handleInputFocus}/>}
                     {editMode ? <UpdateEmail type="submit">Update my email</UpdateEmail> : <EditEmail onClick={() => setEditMode(true)}>Change my email</EditEmail>}
                 </UserInfoContainer>
+                {console.log(userBooking.length)}
                 {userBooking.length && 
                     <Warning>
                         !!! Please use ONLY the following card information for testing: 4242 4242 4242 4242 (the tested card number), 12/21 (tested card expire date), 123 (tested CVC).
