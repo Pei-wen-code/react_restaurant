@@ -309,7 +309,7 @@ export default function MyReserve() {
     const [bookingsPerPage] = useState(3);
 
     const makePayment = (token) => {
-        return fetch('http://localhost:5000/payment', {
+        return fetch('https://agile-taiga-49676.herokuapp.com/payment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -378,7 +378,6 @@ export default function MyReserve() {
             setUserBooking(response.message);
             setEditMode(false);
             setIsLoading(false);
-            // setSuccessUpdate(null);
         })
         .catch((err) => {
             setIsLoading(false);
