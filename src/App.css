@@ -1,0 +1,33 @@
+.App {
+  text-align: center;
+}
+
+.swiper-container {
+  width: 100%;
+}
+
+@media screen and (min-width: 1440px) {
+  .swiper-container {
+    width: 1440px;
+  }
+}
+
+.swiper-wrapper {
+  padding-inline-start: 0;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.swiper-pagination {
+  bottom: 200;
+  padding-bottom: 0px;
+}
+
+.swiper-pagination-bullet {
+  background-color: #a3dea2;
+}
+
+
+.swiper-button-prev { color: #a3dea2; }
+.swiper-button-next { color: #a3dea2; }

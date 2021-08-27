@@ -1,118 +1,65 @@
 import { React, useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { device } from '../../constants/devices';
 import { initAvailableTime, updatedAvailableTime, isPhoneValid } from '../../utils';
 import { AuthContext } from '../../context';
 import { getUserBooking, createReserve, getReserve } from '../../WebAPIs';
-
+import Loader from '../../components/Loader';
+import Modal from '../../components/Modal';
 
 const Root = styled.div`
     width: 100%;
     background: #fefff8;
-    padding: 100px 0px;
+    padding: 200px 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-
-    @media ${device.desktop} {
-        height: 2280px;
-    };
-`;
-
-const changeColour = keyframes`
-    from {
-        color: #fece35;
-    }
-
-    to {
-        color: #a3dea2;
-    }
-`;
-
-const Loading = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 1;
-
-    h1 {
-        font-size: 40px;
-        font-weight: 900;
-        margin: 1300px auto;
-        align-items: center;
-        animation: ${changeColour} 5s infinite;
-    };
-
-    @media ${device.mobileXS} {
-        top: -180px;
-        height: 3230px;
-    };
-    @media ${device.mobileM} {
-        top: -180px;
-        height: 2620px;
-    };
-    @media ${device.mobileL} {
-        top: -180px;
-        height: 1150px;
-    };
-    @media ${device.laptop} {
-        top: -70px;
-        height: 1965px;
-    };
-    @media ${device.desktop} {
-        top: -70px;
-        height: 2590px;
-    };
 `;
 
 const StepsContainer = styled.div`
-    border-radius: 8px;
+    width: 93%;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    @media ${device.mobileXS} {
-        width: 93%;
-    };
-    @media ${device.mobileL} {
-        width: 80%;
-    };
 `;
 
 const DayPicker = styled.section`
-    margin: 50px 10px;
+    width:100%;
+    display: flex;
+    justify-content: center;
 `;
 
-const Title = styled.h3`
+const Title = styled.h1`
     text-align: center;
     border-left: 12px solid #a3dea2;
-    padding-left: 8px;
+    border-radius: 8px;
+    padding-left: 16px;
+    font-family: 'Permanent Marker', cursive;
 `;
 
 const CalendarContainer = styled.div`
+    padding-top: 100px;
+    padding-bottom: 150px;
+
     @media ${device.mobileXS} {
-        width: 260px;
+        width: 100%;
     };
     @media ${device.mobileS} {
-        width: 300px;
-    };
-    @media ${device.mobileM} {
-        margin: 10px -24px;
+        width: 100%;
     };
     @media ${device.tablet} {
-        width: 360px;
-        margin: 10px auto;
+        width: 350px;
     };
 `;
 
 const TimePicker = styled.div`
     width: 80%;
-    margin: 50px auto;
+    padding-top: 100px;
+    padding-bottom: 150px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -121,6 +68,7 @@ const TimePicker = styled.div`
 const SelectInfo = styled.h5`
     padding-top: 30px;
     text-align: center;
+    font-family: 'Permanent Marker', cursive;
     color: #fece35;
 `;
 
@@ -148,7 +96,7 @@ const TimeOptions = styled.div`
 `;
 
 const ReserveForm = styled.form`
-    margin: 50px 10px;
+    padding-top: 100px;
     display: flex;
     flex-direction: column;
 
@@ -183,39 +131,38 @@ const InputLabel = styled.label`
 `;
 
 const Input = styled.input`
-    width: 60%;
     height: 38px;
     margin: 10px 10px;
     border-radius: 5px;
     
     @media ${device.mobileXS} {
-        width:200px;
+        width:100%;
     };
-    @media ${device.mobileM} {
-        width: 300px;
-    };
+
     @media ${device.tablet} {
-        width: 400px;
+        width: 70%;
     };
 `;
 
 const Button = styled.button`
-    width: 100%;
-    margin: 30px auto;
-    border-radius: 8px;
-    border: none;
-    padding: 20px;
-    background: #fece35;
-    transition: transform 0.5s;
+    @media ${device.mobileXS} {
+        width: 90%;
+        margin: 30px auto;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.11);
+        padding: 20px;
+        background: #fece35;
+        transition: transform 0.5s;
 
-    &:hover {
-        transform: scale(1.1);
-    }
-`;
+        &:hover {
+            transform: scale(1.1);
+        }
+    };
 
-const ErrorMessage = styled.div`
-    text-align: center;
-    color: red;
+    @media ${device.tabletL} {
+        width: 45%;
+    };
 `;
 
 export default function ReservePage() {
@@ -237,6 +184,7 @@ export default function ReservePage() {
     const [leftNum, setLeftNum] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isSubmit, setIsSubmit] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const history = useHistory();
 
     const handleDateClick = (value, event) => {
@@ -252,6 +200,8 @@ export default function ReservePage() {
         setErrorMessage('');
     };
     const handleSubmitForm = (e) => {
+        e.preventDefault();
+        
         if (isSubmit || errorMessage) return;
         if (firstname[0] === ' ' || lastname[0] === ' ' || mobile[0] === ' ' || num[0] === ' ') return setErrorMessage('Please do not type space.');
         if (!firstname || !lastname || !mobile || !num ) return setErrorMessage('You must fill all fields.');
@@ -259,11 +209,9 @@ export default function ReservePage() {
         if (timeChoosen === '' || !dateChoosen ) return setErrorMessage('You must choose a day or a time.');
         if (num > 10 || num > leftNum) return setErrorMessage('Sorry. We can only take 10 customers maximum in each slot.')
 
-        e.preventDefault();
-
         const notPaid = userBooking.filter(booking => booking.isPaid === 0);
         if (notPaid.length !== 0) {
-            setErrorMessage('Sorry, you need to payoff your previous booking before making another one.');
+            setErrorMessage('Sorry, you need to payoff your previous booking first.');
             return
         };
         setIsSubmit(true);
@@ -302,10 +250,9 @@ export default function ReservePage() {
     return(
         <Root>
             <StepsContainer>
-                <Title>Step 1: Pick a day</Title>
+                <Title>Step 1: Pick a day you like</Title>
                 <DayPicker>
                     <CalendarContainer>
-                        {dateChoosen && <SelectInfo>You have choosen {dateChoosen}</SelectInfo>}
                         <Calendar onChange={onChange} value={value} onClickDay={handleDateClick} />
                     </CalendarContainer>
                 </DayPicker>
@@ -315,8 +262,7 @@ export default function ReservePage() {
                     {availableTime.map(time => <TimeOptions key={time.index} onClick={() => handleClickTime(time)} $stillAvailable={time.isAvailable} >{time.time}</TimeOptions>)}
                 </TimePicker>
                 <Title>Step 3: Fill in booking detail</Title>
-                <ReserveForm onSubmit={handleSubmitForm}>
-                    {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                <ReserveForm>
                     <InputContainer>
                         <InputLabel>First Name </InputLabel>
                         <Input value={firstname} onChange={(e) => setFirstname(e.target.value)} onFocus={handleInputFocus}/>
@@ -326,17 +272,21 @@ export default function ReservePage() {
                         <Input value={lastname} onChange={(e) => setLastname(e.target.value)} onFocus={handleInputFocus}/>
                     </InputContainer>
                     <InputContainer>
-                        <InputLabel>Mobile </InputLabel>
+                        <InputLabel>UK Mobile </InputLabel>
                         <Input value={mobile} onChange={(e) => setMobile(e.target.value)} onFocus={handleInputFocus}/>
                     </InputContainer>
                     <InputContainer>
                         <InputLabel>Reserve for </InputLabel>
                         <Input value={num} onChange={(e) => setNum(e.target.value)} onFocus={handleInputFocus}/>
                     </InputContainer>
-                    <Button type="submit">Reserve my table</Button>
+                    <Modal open={modalOpen} close={() => setModalOpen(false)} submit={handleSubmitForm} errorMessage={errorMessage}>
+                        Your are reserving for {num || '0'} at {timeDisplay || '00:00'} on {dateChoosen}. <br />
+                        Confirm this booking and pay $10 for reserving tables?<br />
+                    </Modal>
                 </ReserveForm>
+                <Button onClick={()=> setModalOpen(true)}>Reserve my table</Button>
             </StepsContainer>
-            {isSubmit && <Loading><h1>Booking...</h1></Loading>}
+            {isSubmit && <Loader isLoad={isSubmit}/>}
         </Root>
     )
 }

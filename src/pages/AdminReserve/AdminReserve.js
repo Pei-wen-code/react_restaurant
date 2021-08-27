@@ -1,29 +1,38 @@
 import { useState, useEffect } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { device } from '../../constants/devices';
 import { initAvailableTime, updatedAvailableTime, datePicker, monthPicker } from '../../utils';
 import { getReserve, deleteReserve, updateReserve } from '../../WebAPIs';
 import Pagination from '../../components/Pagination';
+import Loader from '../../components/Loader';
 
-const reuseBooked = css`
+const reuseBookedText = css`
     width: 200px;
     margin: 10px 10px;
     line-height: 3;
 `;
 
 const reuseBtn = css`
-    width: 200px;
     background:  #fefff8;
     margin: 10px 10px;
     border: none;
     border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.11);
     padding: 10px 10px;
     transition: transform 0.5s;
 
     &:hover {
         transform: scale(1.1);
+    };
+
+    @media ${device.mobileXS} {
+        width: 90%;
+    };
+
+    @media ${device.laptop} {
+        width: 100%;
     };
 `;
 
@@ -33,56 +42,33 @@ const reuseEdit = css`
     border-radius: 8px;
     border-color: black;
     border-width: 2px;
+
+    @media ${device.mobileXS} {
+        width: 90%;
+    };
+
+    @media ${device.mobileS} {
+        width: 70%;
+    };
+
+    @media ${device.tablet} {
+        width: 50%;
+    };
+
+    @media ${device.laptop} {
+        width: 30%;
+    };
+
 `;
 
 const Root = styled.div`
     width: 100%;
+    min-height: 100vh;
     background:  #fefff8;
-    padding: 100px 0;
+    padding: 200px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-`;
-
-const changeColour = keyframes`
-    from {
-        color: #fece35;
-    }
-
-    to {
-        color: #a3dea2;
-    }
-`;
-
-const Loading = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 1;
-
-    h1 {
-        font-size: 40px;
-        font-weight: 900;
-        margin: 200px auto;
-        align-items: center;
-        animation: ${changeColour} 5s infinite;
-    };
-    
-    @media ${device.mobileXS} {
-        top: -70px;
-        height: 2100px;
-    };
-
-    @media ${device.tablet} {
-        top: -70px;
-        height: 1300px;
-    };
-
-    @media ${device.laptop} {
-        top: -70px;
-        height: 1000px;
-    };
 `;
 
 const BookingInfoContainer = styled.main`
@@ -104,12 +90,17 @@ const TimePicker = styled.div`
     justify-content: center;
 `;
 
-const Title = styled.h2`
-    margin: 30px 0;
+const Title = styled.h1`
     text-align: center;
+    border-left: 12px solid #a3dea2;
+    border-radius: 8px;
+    padding-left: 16px;
+    font-family: 'Permanent Marker', cursive;
+    margin: 0px auto;
 `;
 
 const EditContainer = styled.form`
+    margin-top: 10px;
     border-radius: 8px;
     padding: 5px;
     display: flex;
@@ -130,28 +121,23 @@ const EditLabel = styled.div`
 `;
 
 const EditMonthSelect = styled.select`
-    width: 150px;
     ${reuseEdit};
 `;
 
 const EditDateSelect = styled.select`
-    width: 60px;
     ${reuseEdit};
 `;
 
 const Option = styled.option``; 
 
 const EditYearInput = styled.input`
-    width: 100px;
     ${reuseEdit};
 `;
 
 const EditTimeSelect = styled.select`
-    width: 80px;
     ${reuseEdit};
 `;
 const EditNumInput = styled.input`
-    width: 200px;
     ${reuseEdit};
 `;
 
@@ -179,19 +165,13 @@ const TimeOptions = styled.div`
 `;
 
 const CalendarContainer = styled.div`
-    margin: 10px auto;
+    margin: 100px auto;
 
     @media ${device.mobileXS} {
-        width: 220px;
-    };
-    @media ${device.mobileS} {
-        width: 250px;
-    };
-    @media ${device.mobileM} {
-        width: 300px;
+        width: 100%;
     };
     @media ${device.tablet} {
-        width: 360px;
+        width: 350px;
     };
 `;
 
@@ -203,16 +183,14 @@ const BookedInfoConatiner = styled.section`
     padding: 10px 10px;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     
-    @media ${device.mobileS} {
-        justify-content: center;
-    };
     @media ${device.laptop} {
         justify-content: flex-start;
     };
 `;
 
-const BookedDetail = styled.p`
+const BookedDetailLabel = styled.p`
     width: 200px;
     margin: 10px 10px;
     line-height: 3;
@@ -225,18 +203,18 @@ const BookedDetail = styled.p`
     };
 `;
 
-const BookedDetailDate = styled.p`
-    ${reuseBooked};
+const BookedDetailDateLabel = styled.p`
+    ${reuseBookedText};
 `;
 
-const BookedDetailTime = styled.p`
-    ${reuseBooked};
+const BookedDetailTimeLabel = styled.p`
+    ${reuseBookedText};
 `;
 
-const BookedDetailNum = styled.p`
-    ${reuseBooked};
+const BookedDetailNumLabel = styled.p`
+    ${reuseBookedText};
 `;
-// rwd margin-left: 70px
+
 const ButtonsContainer = styled.section`
     display: flex;
 
@@ -254,6 +232,10 @@ const ButtonsContainer = styled.section`
     @media ${device.laptopL} {
         width: 440px;
         padding-left: 80px;
+    };
+    @media ${device.desktop} {
+        width: 100%;
+        padding-left: 0px;
     };
 `;
 
@@ -372,7 +354,7 @@ export default function AdminReserve() {
     return (
         <Root>
             <BookingInfoContainer>
-                <Title>Time still available</Title>
+                <Title>Is this date and time still available?</Title>
                 <CalendarContainer>
                         <Calendar onChange={onChange} value={value} onClickDay={handleDateClick}/>
                 </CalendarContainer>
@@ -402,14 +384,14 @@ export default function AdminReserve() {
                 </EditContainer>}
                 {currentBookings && currentBookings.map(booking => 
                 <BookedInfoConatiner key={booking.id}>
-                    <BookedDetail>First name: {booking.firstname}</BookedDetail>
-                    <BookedDetail>Last name: {booking.lastname}</BookedDetail>
-                    <BookedDetailDate>Date: {booking.date}</BookedDetailDate>
-                    <BookedDetailTime>Time: {initAvailableTime()[booking.timeIndex].time}</BookedDetailTime>
-                    <BookedDetail>Phone: {booking.mobile}</BookedDetail>
-                    <BookedDetailNum>Number: {booking.num}</BookedDetailNum>
-                    <BookedDetail>Paid: {booking.isPaid === 0 ? 'Not yet' : 'Yes'}</BookedDetail>
-                    <BookedDetail>Email:{booking.User.email}</BookedDetail>
+                    <BookedDetailLabel>First name: {booking.firstname}</BookedDetailLabel>
+                    <BookedDetailLabel>Last name: {booking.lastname}</BookedDetailLabel>
+                    <BookedDetailDateLabel>Date: {booking.date}</BookedDetailDateLabel>
+                    <BookedDetailTimeLabel>Time: {initAvailableTime()[booking.timeIndex].time}</BookedDetailTimeLabel>
+                    <BookedDetailLabel>Phone: {booking.mobile}</BookedDetailLabel>
+                    <BookedDetailNumLabel>Number: {booking.num}</BookedDetailNumLabel>
+                    <BookedDetailLabel>Paid: {booking.isPaid === 0 ? 'Not yet' : 'Yes'}</BookedDetailLabel>
+                    <BookedDetailLabel>Email:{booking.User.email}</BookedDetailLabel>
                     <ButtonsContainer>
                         <EditButton onClick={() => handleClickEdit(booking)}>Edit</EditButton>
                         <DeleteButton onClick={() => handleClickDelete(booking.id)}>Delete</DeleteButton>
@@ -417,7 +399,7 @@ export default function AdminReserve() {
                 </BookedInfoConatiner>)}
                 <Pagination bookingsPerPage={bookingsPerPage} totalBookings={dayBooking.length} currentPage={currentPage} paginate={paginate}/>
             </BookingInfoContainer>
-            {isLoading && <Loading><h1>L o a d i n g ... </h1></Loading>}
+            {isLoading && <Loader isLoad={isLoading}/>}
         </Root>
     )
 }

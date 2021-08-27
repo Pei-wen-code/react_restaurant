@@ -4,75 +4,45 @@ import menuimg from '../../imgs/menu.jpg';
 import { getProducts } from '../../WebAPIs';
 import { device } from '../../constants/devices';
 import Pagination from '../../components/Pagination';
+import Loader from '../../components/Loader';
 
 const Root = styled.div`
     width: 100%;
+    min-height: 100vh;
     background: url(${menuimg}) center/cover;
     padding: 200px 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
-`;
+    position: relative;
 
-const changeColour = keyframes`
-    from {
-        color: #fece35;
-    }
-
-    to {
-        color: #a3dea2;
-    }
-`;
-
-const Loading = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 1;
-
-    h1 {
-        font-size: 40px;
-        font-weight: 900;
-        margin: 200px auto;
-        align-items: center;
-        animation: ${changeColour} 5s infinite;
-    };
-    
-    @media ${device.mobileXS} {
-        top: -70px;
-        height: 2400px;
-    };
-    @media ${device.mobileM} {
-        top: -70px;
-        height: 1800px;
-    };
-    @media ${device.tablet} {
-        top: -70px;
-        height: 1050px;
-    };
-    @media ${device.laptop} {
-        top: -70px;
-        height: 700px;
+    &::after {
+        content: '';
+        background: rgba(0, 0, 0, 0.4);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
     };
 `;
 
 const ProductOptions = styled.section`
     width: 80%;
-    margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    z-index: 1;
 `;
 
-const Product = styled.div`
+const ProductOption = styled.div`
     width: 200px;
     height: 60px;
     background: #fece35;
     margin: 10px 10px;
     border-radius: 8px;
     text-align: center;
-    line-height: 4;
+    line-height: 3.5;
     font-weight: bold;
     color: #fefff8;
     cursor: pointer;
@@ -88,42 +58,75 @@ const Products = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    z-index: 1;
 `;
 const ProductContainer = styled.section`
-    width: 350px;
-    height: 450px;
+    width: 330px;
+    height: 480px;
     background: rgba(255, 255, 255, 0.7);
-    margin: 20px 10px;
+    margin: 20px 20px;
     border-radius: 5px;
     padding-top: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
 `;
+
+const fadeIn = keyframes`
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+`;
+
+const Overlay = styled.div`
+    width: 297px;
+    height: 282px;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    z-Index: 1;
+
+    &:hover {
+        z-Index: 2;
+        animation: 1s ${fadeIn} ease-out;
+        animation-fill-mode: forwards;  
+    };
+`;
+
 const ProductImg = styled.img`
-    width: 90%;
-    height: 400px;
-    background: url(${(props) => props.$img}) no-repeat center/cover;;
+    @media ${device.mobileXS} {
+        width: 90%;
+        height: 60%;
+        object-fit: cover;
+        position: relative;
+
+        &:hover {
+            z-Index: 2;
+        };
+    };
 `;
 
 const ProductName = styled.h4`
     margin-top: 8px;
+    font-family: 'Permanent Marker', cursive;
 `;
 
 const ProductDesc = styled.p`
     height: 100px;
     text-align: center;
     overflow: auto;
+    font-family: 'Permanent Marker', cursive;
 
     @media ${device.mobileXS} {
-        width: 240px;
-    };
-    @media ${device.mobileS} {
-        width: 300px;
+        width: 90%;
     };
 `;
 
-const ProductPrice = styled.h6``;
+const ProductPrice = styled.h6`
+    font-family: 'Permanent Marker', cursive;
+`;
 
 const ErrorMessage = styled.div`
     text-align: center;
@@ -163,24 +166,25 @@ export default function MenuPage() {
         <Root>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             <ProductOptions>
-                <Product onClick={() => setFilter('Appetiser')}>Appetiser</Product>
-                <Product onClick={() => setFilter('Main')}>Main course</Product>
-                <Product onClick={() => setFilter('Dessert')}>Dessert</Product>
-                <Product onClick={() => setFilter('Beverage')}>Beverage</Product>
-                <Product onClick={() => setFilter('Alchohol')}>Alchohol</Product>
+                <ProductOption onClick={() => setFilter('Appetiser')}>Appetiser</ProductOption>
+                <ProductOption onClick={() => setFilter('Main')}>Main course</ProductOption>
+                <ProductOption onClick={() => setFilter('Dessert')}>Dessert</ProductOption>
+                <ProductOption onClick={() => setFilter('Beverage')}>Beverage</ProductOption>
+                <ProductOption onClick={() => setFilter('Alchohol')}>Alchohol</ProductOption>
             </ProductOptions>
 
-            <Products onClick={()=> alert('here is alert')}>
+            <Products>
                 {currentBookings && currentBookings.map( product =>
                 <ProductContainer key={product.id}>
-                    <ProductImg $img={product.url} />
+                    <Overlay></Overlay>
+                    <ProductImg src={product.url} alt="picture"/>
                     <ProductName>{product.product}</ProductName>
                     <ProductDesc>{product.description}</ProductDesc>
                     <ProductPrice>${product.price}</ProductPrice>
                 </ProductContainer>)}
             </Products>
             <Pagination bookingsPerPage={bookingsPerPage} totalBookings={initProducts.length} currentPage={currentPage} paginate={paginate}/>
-            {isLoading && <Loading><h1>Loading ...</h1></Loading>}
+            {isLoading && <Loader isLoad={isLoading}/>}
         </Root>
     )
 }

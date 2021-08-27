@@ -1,8 +1,11 @@
 import { React, useState, useEffect } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
+import { useLocation } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 import { device } from '../../constants/devices';
 import { addProduct, getProducts, deleteProduct, updateItemFile, updateItemText } from '../../WebAPIs';
 import Pagination from '../../components/Pagination';
+import Loader from '../../components/Loader';
 
 const reuseInputAttributes = css`
     margin: 10px 10px;
@@ -15,11 +18,18 @@ const reuseButton = css`
     height: 80px;;
     background: white;
     margin: 5px 5px;
+    border: none;
     border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.11);
     padding: 10px;
     display: felx;
     align-items: center;
     justify-content: center;
+    transition: transform 0.5s;
+
+    &:hover {
+        transform: scale(1.1);
+    };
 `;
 
 const Root = styled.div`
@@ -28,50 +38,7 @@ const Root = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 100px 0px;
-`;
-
-const changeColour = keyframes`
-    from {
-        color: #fece35;
-    }
-
-    to {
-        color: #a3dea2;
-    }
-`;
-
-const Loading = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 1;
-
-    h1 {
-        font-size: 40px;
-        font-weight: 900;
-        margin: 600px auto;
-        align-items: center;
-        animation: ${changeColour} 5s infinite;
-    };
-
-    @media ${device.mobileXS} {
-        top: -70px;
-        height: 4500px;
-    };
-    @media ${device.mobileM} {
-        top: -70px;
-        height: 4300px;
-    };
-    @media ${device.tablet} {
-        top: -70px;
-        height: 3700px;
-    };
-    @media ${device.laptop} {
-        top: -70px;
-        height: 2300px;
-    };
+    padding: 200px 0px;
 `;
 
 const AddProductContainer = styled.main`
@@ -82,8 +49,6 @@ const AddProductContainer = styled.main`
 const AddProductForm = styled.form`
     width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
 `;
 
 const TextDetailContainer = styled.section`
@@ -91,17 +56,16 @@ const TextDetailContainer = styled.section`
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
 `;
 
 const InputContainer = styled.section`
-    margin: 10px 20px;
+    margin: 10px 0px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
 `;
-// RWD: width: 100%
+
 const Input = styled.input`
     height: 38px;
     ${reuseInputAttributes};
@@ -122,7 +86,7 @@ const Input = styled.input`
         width: 350px;
     };
 `;
-// rwd width: 360px;
+
 const InputLong = styled.textarea`
     border-width: 2px;
     ${reuseInputAttributes};
@@ -147,14 +111,19 @@ const InputLong = styled.textarea`
 `;
 
 const InputLabel = styled.label`
-    width: 100px;
-    margin-top: 10px;
-    margin-left: 20px;
+    width: 86px;
+    margin: 10px 10px;
+
+    @media ${device.mobileXS} {
+        text-align: center;
+    };
+    @media ${device.tablet} {
+        text-align: left;
+    };
 `;
 
 const Option = styled.option``;
 
-// rwd: width: 100%
 const Select = styled.select`
     height: 38px;
     ${reuseInputAttributes};
@@ -177,28 +146,21 @@ const Select = styled.select`
     };
 `;
 const AddButton = styled.button`
-    width: 270px;
+    width: 100%;
     height: 80px;
     background: rgba(163, 222, 162, 0.5);
     margin: 20px auto;
     border: none;
     border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.11);
     transition: transform 0.5s;
 
     &:hover {
         transform: scale(1.1);
     };
-
-    @media ${device.mobileXS} {
-        width: 184px;
-    };
-    @media ${device.tablet} {
-        width: 500px;
-    };
 `;
 
 const OptionContainer = styled.div`
-    background: rgba(255, 255, 255, 0.6);
     border-radius: 5px;
     display: flex;
 
@@ -212,14 +174,21 @@ const OptionContainer = styled.div`
 
 const ProductsOption = styled.div`
     border-bottom: 5px solid transparent;
-    padding: 20px 16px;
+    padding: 20px;
     font-weight: bold;
-    font-size: 32px;
     color: #4b731f;
     cursor: pointer;
 
     &:hover {
         border-bottom: 5px solid rgba(247, 202, 24, 0.7);;
+    };
+
+    @media ${device.mobileXS} {
+        font-size: 24px;
+    };
+
+    @media ${device.laptop} {
+        font-size: 32px;
     };
 `;
 
@@ -251,12 +220,8 @@ const ProductImage = styled.img`
     object-fit: cover;
 
     @media ${device.mobileXS} {
-        width: 200px;
-        height: 300px;
-    };
-    @media ${device.mobileM} {
-        width: 300px;
-        height: 300px;
+        width: 100%;
+        height: 100%;
     };
 `;
 
@@ -275,7 +240,6 @@ const ProductTextContainer = styled.section`
     };
     @media ${device.laptopL} {
         width: 50%;
-        height: 300px;
     };
 `;
 
@@ -298,8 +262,14 @@ const ButtonsContainer = styled.section`
     justify-content: space-between;
 `;
 
-const EditButton = styled.button`
+const EditButton = styled(HashLink)`
     ${reuseButton};
+    color: black;
+
+    &:hover {
+        color: black;
+        text-decoration: none;
+    }
 `;
 
 const DeleteButton = styled.button`
@@ -323,16 +293,19 @@ export default function AdminMenu() {
     const [isSubmit, setIsSubmit] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [editId, setEditId] = useState(null);
+    const [editMode, setEditMode] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [bookingsPerPage] = useState(3);
+    const { pathname } = useLocation();
 
     const handleSubmitForm = (e) => {
-        setIsSubmit(true);
         e.preventDefault();
 
         if (!product || !price || !type || !desc || !selectFile) {
             return setErrMessage("Some inputs are left in blank, you must fill all.")
         };
+
+        setIsSubmit(true);
 
         const formData = new FormData();
         formData.append('product', product);
@@ -358,14 +331,17 @@ export default function AdminMenu() {
                 setType('Appetiser');
                 setSelectFile(null);
                 setIsSubmit(false);
+                setEditMode(false);
             })
             .catch((err) => {
                 setIsSubmit(false);
+                setEditMode(false);
                 return setErrMessage(err)
             });
         })
         .catch((err) => {
             setIsSubmit(false);
+            setEditMode(false);
             return setErrMessage(err)
         });
     };
@@ -390,14 +366,17 @@ export default function AdminMenu() {
                     setType('Appetiser');
                     setEditId(null);
                     setIsSubmit(false);
+                    setEditMode(false);
                 })
                 .catch((err) => {
                     setIsSubmit(false);
+                    setEditMode(false);
                     return setErrMessage(err)
                 });
             })
             .catch((err) => {
                 setIsSubmit(false);
+                setEditMode(false);
                 return setErrMessage(err)
             });
         };
@@ -428,18 +407,30 @@ export default function AdminMenu() {
                     setSelectFile(null);
                     setEditId(null);
                     setIsSubmit(false);
+                    setEditMode(false);
                 })
                 .catch((err) => {
                     setIsSubmit(false);
+                    setEditMode(false);
                     return setErrMessage(err)
                 });
             })
             .catch((err) => {
                 setIsSubmit(false);
+                setEditMode(false);
                 return setErrMessage(err)
             });
         };
     };
+    const handleGiveUpEdit = () => {
+        setProduct('');
+        setPrice('');
+        setDesc('');
+        setType('Appetiser');
+        setSelectFile(null);
+        setEditMode(false);
+    }
+
     const handleClickDelete = (productId, productType) => {
         deleteProduct(productId)
         .then((response) => {
@@ -464,6 +455,7 @@ export default function AdminMenu() {
         setType(type);
         setDesc(description);
         setEditId(id);
+        setEditMode(true);
     };
     const handleInputFocus = () => {
         setErrMessage('');
@@ -490,9 +482,10 @@ export default function AdminMenu() {
     };
     return (
         <Root>
-            <AddProductContainer>
+            <AddProductContainer id="input">
+                {!editMode ? <AddButton onClick={() => setEditMode(true)}>Add some good stuff!</AddButton> : ''}
                 {errMessage && <ErrMessage>{errMessage}</ErrMessage>}
-                <AddProductForm onSubmit={editId ? handleEditForm : handleSubmitForm}>
+                {editMode && <AddProductForm onSubmit={editId ? handleEditForm : handleSubmitForm}>
                     <TextDetailContainer>
                         <InputContainer>
                             <InputLabel>Product </InputLabel>
@@ -521,8 +514,9 @@ export default function AdminMenu() {
                             <Input type='file' id='input' accept='image/*' onChange={(e) => setSelectFile(e.target.files[0])} onFocus={handleInputFocus}/>
                         </InputContainer>
                         {editId ? <AddButton type="submit">Update this product</AddButton> : <AddButton type="submit">Add this product</AddButton>}
+                        {editMode && <AddButton onClick={handleGiveUpEdit}>I am actually fine.</AddButton>}
                     </TextDetailContainer>
-                </AddProductForm>
+                </AddProductForm>}
             </AddProductContainer>
 
             <OptionContainer>
@@ -546,15 +540,15 @@ export default function AdminMenu() {
                             <ProductInfo>{product.description}</ProductInfo>
                         </ProductTextContainer>
                         <ButtonsContainer>
-                            <EditButton onClick={() => addDataToEdit(product)} >Edit</EditButton>
+                            <EditButton smooth to={`${pathname}#input`} onClick={() => addDataToEdit(product)} >Edit</EditButton>
                             <DeleteButton onClick={() => handleClickDelete(product.id, product.type)}>Delete</DeleteButton>
                         </ButtonsContainer>
                     </ProductContainer>
                 ))}
                 <Pagination bookingsPerPage={bookingsPerPage} totalBookings={initProducts.length} currentPage={currentPage} paginate={paginate}/>
             </ShowProductsContainer>
-            {isSubmit && <Loading><h1>Submitting ...</h1></Loading>}
-            {isLoading && <Loading><h1>Loading ...</h1></Loading>}
+            {isSubmit && <Loader isLoad={isSubmit}/>}
+            {isLoading && <Loader isLoad={isLoading}/>}
         </Root>
     )
 }

@@ -1,10 +1,11 @@
 import { React, useContext, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css  } from 'styled-components';
 import { setAuthToken } from '../../utils';
 import { device } from '../../constants/devices';
 import { login, getMe } from '../../WebAPIs';
 import { AuthContext } from '../../context';
+import Loader from '../../components/Loader';
 
 const reuseHover = css`
     font-weight: bold;
@@ -21,72 +22,12 @@ const reuseButton = css`
 
 const Root = styled.div`
     width: 100%;
+    min-height: 100vh;
     background: #fefff8;
-    padding: 100px 0px;
+    padding: 200px 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
-
-    @media ${device.mobileL} {
-        height: 700px;
-    };
-    @media ${device.tablet} {
-        height: 740px;
-    };
-    @media ${device.laptop} {
-        height: 1090px;
-    };
-    @media ${device.desktop} {
-        height: 1600px;
-    };
-`;
-
-const changeColour = keyframes`
-    from {
-        color: #fece35;
-    }
-
-    to {
-        color: #a3dea2;
-    }
-`;
-// Preload 的文字要改置中
-const Loading = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 1;
-
-    h1 {
-        font-size: 40px;
-        font-weight: 900;
-        margin: 130px auto;
-        align-items: center;
-        animation: ${changeColour} 5s infinite;
-    };
-
-    @media ${device.mobileXS} {
-        top: -180px;
-        height: 1220px;
-    };
-    @media ${device.mobileM} {
-        top: -180px;
-        height: 1166px;
-    };
-    @media ${device.mobileL} {
-        top: -180px;
-        height: 1150px;
-    };
-    @media ${device.laptop} {
-        top: -70px;
-        height: 1390px;
-    };
-    @media ${device.desktop} {
-        top: -70px;
-        height: 1904px;
-    };
 `;
 
 const UserInfoContainer = styled.div`
@@ -105,7 +46,6 @@ const UserInfoForm = styled.form`
 
 const InputContainer = styled.section`
     width: 100%;
-    margin: 10px 10px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -192,9 +132,10 @@ export default function LoginPage() {
         setPassword(e.target.value);
     };
     const handleSubmitForm = (e) => {
+        e.preventDefault();
         if (isSubmit || errorMessage) return;
         if (!username || !password) return setErrorMessage('You must fill in all blanks')
-        e.preventDefault();
+        
         setIsSubmit(true);
         login(username, password)
         .then((response) => {
@@ -244,7 +185,7 @@ export default function LoginPage() {
                     </ButtonsContainer>
                 </UserInfoForm>
             </UserInfoContainer>
-            {isSubmit && <Loading><h1>Logining...</h1></Loading>}
+            {isSubmit && <Loader isLoad={isSubmit}/>}
         </Root>
     )
 }

@@ -14,6 +14,17 @@ import AdminMenuPage from './pages/AdminMenuPage';
 import AdminReserve from './pages/AdminReserve';
 import Footer from './components/Footer';
 
+import styled from 'styled-components';
+
+const Root = styled.section`
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+`;
+
 function App() {
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -28,38 +39,40 @@ function App() {
   }, [user, userId]);
 
   return (
-    <AuthContext.Provider value={{user, setUser, userId, setUserId}}>
-      <Router>
-        <NavBoostrap />
-        <Switch>
-          <Route exact path="/">
-            <HomePage />
-          </Route>
-          <Route exact path="/menu">
-            <MenuPage />
-          </Route>
-          <Route exact path="/login">
-            <LoginPage />
-          </Route>
-          <Route exact path="/register">
-            <RegisterPage />
-          </Route>
-          <Route exact path="/reserve">
-            <ReservePage />
-          </Route>
-          <Route exact path="/reserve/user">
-            <MyReserve />
-          </Route>
-          <Route exact path="/admin/menu">
-            <AdminMenuPage />
-          </Route>
-          <Route exact path="/admin/reserve">
-            <AdminReserve />
-          </Route>
-        </Switch>
-        <Footer />
-      </Router>
-    </AuthContext.Provider>
+    <Root>
+      <AuthContext.Provider value={{user, setUser, userId, setUserId}}>
+        <Router>
+          <NavBoostrap />
+          <Switch>
+            <Route exact path="/">
+              <HomePage />
+            </Route>
+            <Route exact path="/menu">
+              <MenuPage />
+            </Route>
+            <Route exact path="/login">
+              <LoginPage />
+            </Route>
+            <Route exact path="/register">
+              <RegisterPage />
+            </Route>
+            <Route exact path="/reserve">
+              <ReservePage />
+            </Route>
+            <Route exact path="/reserve/user">
+              <MyReserve />
+            </Route>
+            <Route exact path="/admin/menu">
+              <AdminMenuPage />
+            </Route>
+            <Route exact path="/admin/reserve">
+              <AdminReserve />
+            </Route>
+          </Switch>
+          <Footer />
+        </Router>
+      </AuthContext.Provider>
+    </Root>
   );
 }
 

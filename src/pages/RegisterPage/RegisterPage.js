@@ -1,79 +1,20 @@
 import { React, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { device } from '../../constants/devices'; 
 import { register, getMe } from '../../WebAPIs';
 import { isEmailValid, isPwValid, setAuthToken }from '../../utils';
 import { AuthContext } from '../../context';
+import Loader from '../../components/Loader';
 
 const Root = styled.div`
     width: 100%;
+    min-height: 100vh;
     background: #fefff8;
-    padding: 100px 0px;
+    padding: 200px 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
-
-    @media ${device.mobileL} {
-        height: 700px;
-    };
-    @media ${device.tablet} {
-        height: 740px;
-    };
-    @media ${device.laptop} {
-        height: 1090px;
-    };
-    @media ${device.desktop} {
-        height: 1600px;
-    };
-`;
-
-const changeColour = keyframes`
-    from {
-        color: #fece35;
-    }
-
-    to {
-        color: #a3dea2;
-    }
-`;
-
-const Loading = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 1;
-
-    h1 {
-        font-size: 40px;
-        font-weight: 900;
-        margin: 130px auto;
-        align-items: center;
-        animation: ${changeColour} 5s infinite;
-    };
-
-    @media ${device.mobileXS} {
-        top: -180px;
-        height: 1220px;
-    };
-    @media ${device.mobileM} {
-        top: -180px;
-        height: 1166px;
-    };
-    @media ${device.mobileL} {
-        top: -180px;
-        height: 1150px;
-    };
-    @media ${device.laptop} {
-        top: -70px;
-        height: 1390px;
-    };
-    @media ${device.desktop} {
-        top: -70px;
-        height: 1904px;
-    };
 `;
 
 const UserInfoContainer = styled.main`
@@ -114,10 +55,7 @@ const Input = styled.input`
 
 const Notice = styled.div``;
 
-const ButtonsContainer = styled.section`
-    display: flex;
-    justify-content: center;
-`;
+const ButtonsContainer = styled.section``;
 
 const RegisterButton = styled.button`
     background: #fece35;
@@ -158,6 +96,8 @@ export default function RegisterPage() {
         setErrorMessage('');
     };
     const handleSubmitForm = (e) => {
+        e.preventDefault();
+        
         if (isSubmit || errorMessage) return;
         if (!isEmailValid(email)) return setErrorMessage('Invalid email.');
         if (username[0] === ' ' || password[0] === ' ') return setErrorMessage('Please do not type space.');
@@ -165,7 +105,6 @@ export default function RegisterPage() {
         if (!isPwValid(password)) return setErrorMessage('Password must be at least 8 characters long.');
         if (password !== confirmPassword) return setErrorMessage('Password confirmation went wrong. Please try again.');
 
-        e.preventDefault();
         setIsSubmit(true);
         register(username, email, password)
         .then((response) => {
@@ -220,7 +159,7 @@ export default function RegisterPage() {
                     </ButtonsContainer>
                 </UserInfoForm>
             </UserInfoContainer>
-            {isSubmit && <Loading><h1>Registering...</h1></Loading>}
+            {isSubmit && <Loader isLoad={isSubmit}/>}
         </Root>
     )
 }

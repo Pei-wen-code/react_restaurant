@@ -1,11 +1,14 @@
 import { React, useState, useEffect, useContext } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 import StripeCheckout from 'react-stripe-checkout';
 import { AuthContext } from '../../context';
 import { getUserInfo, getUserBooking, updateEmail, isPaid } from '../../WebAPIs';
 import { initAvailableTime, isEmailValid } from '../../utils';
 import { device } from '../../constants/devices';
 import Pagination from '../../components/Pagination';
+import Loader from '../../components/Loader';
+import vegeimg from '../../imgs/healthy-eating.svg';
 require('dotenv').config();
 
 const reuseBookedInfo = css`
@@ -14,153 +17,217 @@ const reuseBookedInfo = css`
     text-align: center;
 `;
 
-const reuseEmailEdition = css`
-    width: 200px;
-    height: 60px;
-    margin: 20px 10px;
-    border: none;
-    border-radius: 8px;
-
-    &:hover {
-        background: #fece35;
-    }
-`;
-
-const reuseUserInfo = css`
-    padding: 20px 20px;
-    text-align: center;
+const reuseSideBarBtn = css`
+    background: ${(props) => (props.$tagColor) ? 'rgba(163, 222, 162, 0.5)' : 'none'};
 
     @media ${device.mobileXS} {
-        width: 200px;
+        width: 100%;
+        height: 70px;
+        margin: 20px 0;
+        border: none;
+        border-left: 12px solid rgba(163, 222, 162, 0.5);
+        padding-left: 16px;
+        text-align: start;
+        border-radius: 8px;
     };
-    @media ${device.tablet} {
-        width: 400px;
+
+    @media ${device.laptop} {
+        width: 70%;
+        height: 40px;
+    };
+
+    @media ${device.laptopL} {
+        margin: 10px 0;
+    };
+`;
+
+const reuseBtn = css`
+    @media ${device.mobileXS} {
+        width: 200px;
+        background: #fefff8;
+        margin: 20px 10px;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.11);
+        padding: 16px;
+        transition: transform 0.5s;
+
+        &:hover {
+            background: #fece35;
+            transform: scale(1.1);
+        };
+    };
+
+    @media ${device.laptopL} {
+        width: 150px;
+        margin-left: 20px;
+    };
+`;
+
+const reuseCard = css`
+    @media ${device.mobileXS} {
+        width: 130%;
+        height: 238px;
+        background: rgba(163, 222, 162, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 8px;
+    };
+
+    @media ${device.laptop} {
+        width: 100%;
     };
 `;
 
 const Root = styled.div`
     width: 100%;
+    min-height: 100vh;
     background: #fefff8;
-    padding 100px 0;
+    padding: 200px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    @media ${device.mobileXS} {
-        top: -70px;
-        height: 2300px;
-    };
-    @media ${device.mobileM} {
-        top: -70px;
-        height: 1700px;
-    };
-    @media ${device.tablet} {
-        top: -70px;
-        height: 1100px;
-    };
-    @media ${device.desktop} {
-        top: -70px;
-        height: 2280px;
-    };
 `;
-
-const changeColour = keyframes`
-    from {
-        color: #fece35;
-    }
-
-    to {
-        color: #a3dea2;
-    }
-`;
-
-const Loading = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 1;
-
-    h1 {
-        font-size: 40px;
-        font-weight: 900;
-        margin: 200px auto;
-        align-items: center;
-        animation: ${changeColour} 5s infinite;
-    };
-    
-    @media ${device.mobileXS} {
-        top: -70px;
-        height: 2400px;
-    };
-    @media ${device.mobileM} {
-        top: -70px;
-        height: 1800px;
-    };
-    @media ${device.tablet} {
-        top: -70px;
-        height: 1300px;
-    };
-`;
-
 const UserContanier = styled.main`
-    width: 80%;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: center;
+    @media ${device.mobileXS} {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    };
+
+    @media ${device.laptop} {
+        flex-direction: row;
+        align-items: initial;
+    };
+`;
+const UserInfoContainer = styled.section`
+    @media ${device.mobileXS} {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    };
+
+    @media ${device.laptop} {
+        width: 30%;
+    };
 `;
 
-const UserInfoContainer = styled.form`
-    width: 100%;
-    margin: 10px 0;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: center;
+const UserInfo = styled.h3`
+    font-family: 'Permanent Marker', cursive;
 `;
 
-const UserInfo = styled.div`
-    ${reuseUserInfo};
-`;
-
-const Email = styled.div`
-    ${reuseUserInfo}
+const RevealBooking = styled.button`
+    ${reuseSideBarBtn};
+    background: ${(props) => (!props.$tagColor) ? 'rgba(163, 222, 162, 0.5)' : 'none'};
+    margin-top: 20px;
 `;
 
 const EditEmail = styled.button`
-    ${reuseEmailEdition};
-`;
-
-const UpdateEmail = styled.button`
-    ${reuseEmailEdition};
-`;
-
-const Input = styled.input`
-    border-width: 2px;
-    border-radius: 4px;
-
-    @media ${device.mobileXS} {
-        width: 200px;
-    };
-    @media ${device.tablet} {
-        width: 300px;
-    };
+    ${reuseSideBarBtn};
+    margin-top: 20px;
 `;
 
 const UserBookingContainer = styled.section`
-    width: 100%;
-    background: rgba(163, 222, 162, 0.5);
-    margin: 20px 0;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    border-radius: 8px;
+    @media ${device.mobileXS} {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    };
+
+    @media ${device.laptop} {
+        width: 70%;
+        margin-left: 20px;
+    };
 `;
 
-const Warning = styled.h6`
-    color: red;
+const UpdateForm = styled.form`
+    ${reuseCard};
+
+    @media ${device.mobileXS} {
+        justify-content: center;
+    };
+ 
+    @media ${device.laptop} {
+        flex-direction: row;
+    };
+`;
+
+const Input = styled.input`
+    @media ${device.mobileXS} {
+        width: 80%;
+        height: 40px;
+        border-width: 2px;
+        border-radius: 4px;
+        margin: 20px 0px;
+    };
+
+    @media ${device.mobileM} {
+        width: 90%;
+    }
+
+    @media ${device.tablet} {
+    };
+
+    @media ${device.laptopL} {
+        width: 250px;
+        margin-left: 10px;
+    };
+`;
+
+const Email = styled.div`
+    @media ${device.mobileXS} {
+        text-align: center;
+        font-weight: bold;
+    };
+`;
+
+const UpdateEmail = styled.button`
+    ${reuseBtn};
+`;
+
+const PromoteContainer = styled.div`
+    ${reuseCard};
+`;
+
+const ReserveImage = styled.img`
+    width: 238px;
+    height: 238px;
+`;
+
+const CreateBookingContainer =styled.div`
+    position: relative;
+    top: -80px;
+`;
+
+const CreateBooking = styled(Link)`
+    color: #fefff8;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 28px;
+
+    &:hover {
+        color: #fece35;
+        text-decoration: none;
+    };
+`;
+
+const UserBookingDetails = styled.section`
+    ${reuseCard};
+    @media ${device.mobileXS} {
+        height: auto;
+        padding: 20px 0;
+        margin-bottom: 20px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        &:nth-child(1) {
+            margin-top:0px;
+        };
+    };
 `;
 
 const FirstName = styled.h6`
@@ -193,18 +260,31 @@ const FeeStatus = styled.h6`
     ${reuseBookedInfo};
 `;
 
-const Button = styled.div`
-    background: #fece35;
-    margin: 20px 10px;
-    border: none;
-    border-radius: 8px;
-    padding: 16px;
-    transition: transform 0.5s;
-
-    &:hover {
-        transform: scale(1.1);
-    }
+const PayButton = styled.button`
+    ${reuseBtn};
 `;
+
+const Warning = styled.div`
+    @media ${device.mobileXS} {
+        width: 100%;
+        background: #fece35;
+        text-align: center;
+        margin: 20px 0;
+        border-radius: 8px;
+        padding: 10px;
+    };
+
+    @media ${device.laptop} {
+        width: 70%;
+    };
+`;
+
+const Highlight = styled.span`
+    color: red;
+    font-weight: bold;
+`;
+
+const DocLink = styled.a``;
 
 const ErrorMessage = styled.div`
     text-align: center;
@@ -216,7 +296,7 @@ export default function MyReserve() {
     const [payStatus, setPayStatus] = useState(false);
     const [userBooking, setUserBooking] = useState('');
     const [userInfo, setUserInfo] = useState('');
-    const [editMode, setEditMode] = useState('');
+    const [editMode, setEditMode] = useState(false);
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isSubmit, setIsSubmit] = useState(false);
@@ -229,7 +309,7 @@ export default function MyReserve() {
     const [bookingsPerPage] = useState(3);
 
     const makePayment = (token) => {
-        return fetch('https://agile-taiga-49676.herokuapp.com/payment', {
+        return fetch('http://localhost:5000/payment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -257,9 +337,17 @@ export default function MyReserve() {
     const handleInputFocus = () => {
         setErrorMessage('');
     };
+
+    const handleEditMode = (email) => {
+        setUserBooking('');
+        setEditMode(true);
+        setEmail(email);
+    }
+
     const handleSubmitForm = (e) => {
-        if (!isEmailValid(email)) return setErrorMessage('Invalid email.');
         e.preventDefault();
+        if (!isEmailValid(email)) return setErrorMessage('Invalid email.');
+
         setIsSubmit(true);
         updateEmail(email, userInfo.id).then((response) => {
             if (response.ok !== 1) {
@@ -269,9 +357,10 @@ export default function MyReserve() {
             getUserInfo(user).then((response) => {
                 if (response.ok !== 1) return setErrorMessage(response.message);
                 setIsSubmit(false);
-                setEditMode('');
+                setEditMode(false);
                 setEmail('');
                 setUserInfo(response.message);
+                handleEditMode(email);
             }).catch((err) => {
                 setIsSubmit(false);
                 return setErrorMessage(err.message);
@@ -282,9 +371,25 @@ export default function MyReserve() {
         });
     };
 
+    const handleGetUserBookings = (user) => {
+        getUserBooking(user)
+        .then((response) => {
+            if (response.ok !== 1) return setErrorMessage(response.message);
+            setUserBooking(response.message);
+            setEditMode(false);
+            setIsLoading(false);
+            // setSuccessUpdate(null);
+        })
+        .catch((err) => {
+            setIsLoading(false);
+            return setErrorMessage(err);
+        });
+    };
+
     useEffect(() => {
         setIsLoading(true);
-        getUserInfo(user).then((response) => {
+        getUserInfo(user)
+        .then((response) => {
             if (response.ok !== 1) return setErrorMessage(response.message);
             setUserInfo(response.message);
 
@@ -314,42 +419,63 @@ export default function MyReserve() {
     return(
         <Root>
             <UserContanier>
-                <UserInfoContainer onSubmit={handleSubmitForm}>
-                    <UserInfo>Hi, {user} !{userBooking.length === 0 ? ' You do not have any bookings yet.': ' Here are your bookings details.'}</UserInfo>
-                    <Email>Your email is {userInfo && userInfo.email}</Email>
-                    {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-                    {editMode && <Input value={email} onChange={(e) => setEmail(e.target.value)} onFocus={handleInputFocus}/>}
-                    {editMode ? <UpdateEmail type="submit">Update my email</UpdateEmail> : <EditEmail onClick={() => setEditMode(true)}>Change my email</EditEmail>}
+                <UserInfoContainer>
+                        <UserInfo>Welcome {user}</UserInfo>
+                        <RevealBooking $tagColor={editMode} onClick={() => handleGetUserBookings(user)}>See my bookings</RevealBooking>
+                        <EditEmail $tagColor={editMode} onClick={() => handleEditMode(userInfo.email)}>Check account setting</EditEmail>
+                        {userBooking.length !== 0 && 
+                            <Warning>
+                                <Highlight>For testing payment</Highlight>:
+                                4242 4242 4242 4242 (the tested card number), 
+                                12/21 (tested card expire date), 
+                                123 (tested CVC).
+                                Explore <DocLink href='https://stripe.com/docs/testing'>this document</DocLink> for testing payment.
+                            </Warning>
+                        }
                 </UserInfoContainer>
-                {userBooking.length !== 0 && 
-                    <Warning>
-                        !!! Please use ONLY the following card information for testing: 4242 4242 4242 4242 (the tested card number), 12/21 (tested card expire date), 123 (tested CVC).
-                        Explore <a href='https://stripe.com/docs/testing'>this document</a> for testing payment.
-                    </Warning>
-                }
-                {currentBookings !== '' && currentBookings.map((booking) => <UserBookingContainer key={booking.id}>
-                    <Date>{booking.date}</Date>
-                    <FirstName>{booking.firstname}</FirstName>
-                    <LastName>{booking.lastname}</LastName>
-                    <Time>{initAvailableTime()[booking.timeIndex].time}</Time>
-                    <Number>{booking.num}</Number>
-                    {payStatus || booking.isPaid ? <FeeStatus>All set! We are looking forward seeing you!</FeeStatus> : <FeeStatus>Please pay $10 for completing your booking.</FeeStatus>}
-                    {payStatus && handleUpdatePay(booking.id)}
-                    {payStatus === false && booking.isPaid === 0 && <StripeCheckout 
-                        stripeKey={process.env.REACT_APP_KEY} 
-                        name="Pay Booking Fee"
-                        token={makePayment} 
-                        amount={product.price * 100} 
-                        shippingAddress 
-                        billingAddress
-                    >
-                        <Button>Pay with card</Button>
-                    </StripeCheckout>}
-                </UserBookingContainer>)}
-                <Pagination bookingsPerPage={bookingsPerPage} totalBookings={userBooking.length} currentPage={currentPage} paginate={paginate}/>
+
+                <UserBookingContainer>
+                    {editMode && 
+                        <UpdateForm onSubmit={handleSubmitForm}>
+                            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                            {editMode && <Email>Your email is <Input value={email} onChange={(e) => setEmail(e.target.value)} onFocus={handleInputFocus}/></Email>}
+                            {editMode && <UpdateEmail type="submit">Update now</UpdateEmail> }
+                        </UpdateForm>
+                    }
+                    {userBooking && userBooking.length === 0 && 
+                    <PromoteContainer>
+                        <ReserveImage src={vegeimg} alt=""/>
+                        <CreateBookingContainer>
+                            <CreateBooking to={'/reserve'}>Click me !</CreateBooking>
+                        </CreateBookingContainer>
+                    </PromoteContainer>
+                    }
+                    {currentBookings !== '' && currentBookings.map((booking) => 
+                        <UserBookingDetails key={booking.id}>
+                            <Date>{booking.date}</Date>
+                            <FirstName>{booking.firstname}</FirstName>
+                            <LastName>{booking.lastname}</LastName>
+                            <Time>{initAvailableTime()[booking.timeIndex].time}</Time>
+                            <Number>{booking.num}</Number>
+                            {payStatus || booking.isPaid ? <FeeStatus>All set! We are looking forward seeing you!</FeeStatus> : <FeeStatus>Please pay $10 for completing your booking.</FeeStatus>}
+                            {payStatus && handleUpdatePay(booking.id)}
+                            {payStatus === false && booking.isPaid === 0 && <StripeCheckout 
+                                stripeKey={process.env.REACT_APP_KEY} 
+                                name="Pay Booking Fee"
+                                token={makePayment} 
+                                amount={product.price * 100} 
+                                shippingAddress 
+                                billingAddress
+                            >
+                                <PayButton>Pay with card</PayButton>
+                            </StripeCheckout>}
+                        </UserBookingDetails>)
+                    }
+                </UserBookingContainer>
             </UserContanier>
-            {isSubmit && <Loading><h1>Updating email ...</h1></Loading>}
-            {isLoading && <Loading><h1>Loading ...</h1></Loading>}
+            <Pagination bookingsPerPage={bookingsPerPage} totalBookings={userBooking.length} currentPage={currentPage} paginate={paginate}/>
+            {isSubmit && <Loader isLoad={isSubmit}/>}
+            {isLoading && <Loader isLoad={isLoading}/>}
         </Root>
     )
 }

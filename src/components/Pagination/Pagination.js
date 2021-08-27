@@ -2,24 +2,25 @@ import React from 'react';
 import styled from 'styled-components';
 
 const PaginationContainer = styled.div`
-display: flex;
-flex-direction: row;
-justify-content: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    z-index: 1;
 `;
 const Li = styled.li`
-list-style-type: none;
-font-family: sans-serif;
+    list-style-type: none;
+    font-family: sans-serif;
 `;
 const Number = styled.button`
-width: 50px;
-height: 50px;
-border-radius: 50px;
-border: none;
-margin: 10px 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    border: none;
+    margin: 10px 10px;
 
-&.active, &:hover {
-    background: #fece35;
-}
+    &.active, &:hover {
+        background: #fece35;
+    }
 `;
 
 export default function Pagination({ bookingsPerPage, totalBookings, currentPage, paginate }) {
