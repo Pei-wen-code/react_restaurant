@@ -21,8 +21,8 @@ Or simply create a new account by registration.
 
 <img width="1419" alt="register" src="https://user-images.githubusercontent.com/58638019/131512782-56af10b9-534e-49fd-bb34-488ae5102bf0.png">
 
-# Why?
-This project is inspired by [one of my assignment](https://github.com/Lidemy/mentor-program-4th-Pei-wen-code/tree/master/homeworks/week6) when I was learning in a [coding mentorship programme](https://github.com/Lidemy/mentor-program-4th-Pei-wen-code) with Lidemy. That is a simple webpage where only HTML and CSS are used. Having been learning React and Node.js, I decide to create a SPA website where customers can make reservation without spending time to call restaurants. On the other hand, restaurant owners can save time to look for the availability when customers phone in, meaning they will have more time to be creative in their cuisine.
+# About this project
+This project is inspired by [one of my assignment](https://github.com/Lidemy/mentor-program-4th-Pei-wen-code/tree/master/homeworks/week6) when I was learning in a [coding mentorship programme](https://github.com/Lidemy/mentor-program-4th-Pei-wen-code) with Lidemy. That is a simple homepage of an imagined restaurant where only HTML and CSS are used. Having been learning React and Node.js, I decide to create a SPA website where customers can make reservation without spending time to call restaurants. On the other hand, restaurant owners can save time to look for the availability when customers phone in, meaning they will have more time to be creative in their cuisine.
 
 # Fatures
 * Customers can
@@ -32,10 +32,10 @@ This project is inspired by [one of my assignment](https://github.com/Lidemy/men
   - make reservation accordingly
   - pay table reservation fee once the reservation is made
   - manage their email
-* Restaurant owners can
+* Restaurant owners
   - also have the above features
-  - edit or delete existing bookings
-  - create, edit and delete items in the menu
+  - can edit or delete existing bookings
+  - can create, edit and delete items in the menu
 
 # Technical skills
 * Create React APP // Creating a React app and its environment
@@ -49,8 +49,10 @@ This project is inspired by [one of my assignment](https://github.com/Lidemy/men
 * react-stripe-checkout // Stripe API which manages payment
 * swiper // An UI component creating carousel effect for customers' review
 * react-router-hash-link // Same-page-navigation that is used when admin is editing the menu
+* Heroku // Deploy to heroku
 
 # Content
+* Customers
 <img width="1421" alt="menu" src="https://user-images.githubusercontent.com/58638019/131515265-f0af285f-d9be-46a0-bd29-c9f507e2920d.png">
 
 <img width="1421" alt="reserve1" src="https://user-images.githubusercontent.com/58638019/131515418-0c9a4ffa-c037-417c-a2f7-e21e8e9c1aae.png">
@@ -67,6 +69,8 @@ This project is inspired by [one of my assignment](https://github.com/Lidemy/men
 
 <img width="1417" alt="stripepay" src="https://user-images.githubusercontent.com/58638019/131515820-5e193fde-5aa9-47b1-8ffd-da9321f5b3d0.png">
 
+* Restaurant owners 
+
 <img width="1418" alt="adminmenu1" src="https://user-images.githubusercontent.com/58638019/131515884-718bfe15-c80b-464e-8a3c-18cfe0e74346.png">
 
 <img width="1417" alt="adminmenu2" src="https://user-images.githubusercontent.com/58638019/131515940-c84092ff-20b9-43f4-81d9-32e44ad3623f.png">
@@ -74,9 +78,25 @@ This project is inspired by [one of my assignment](https://github.com/Lidemy/men
 <img width="1418" alt="adminreserve" src="https://user-images.githubusercontent.com/58638019/131515995-ba6292c6-fab4-421e-b5f4-bfd166daef6b.png">
 
 # Resources
-xxx
+[Unsplash](https://unsplash.com)
+
+[Flaticon](https://www.flaticon.com)
 
 # Declaration
-xxx
+This website is only for prectice and learning, not for any business use.
+
 # Installing
-xxx
+1. Clone this repository
+```javascript
+git clone https://github.com/Pei-wen-code/react_restaurant
+```
+
+2.Install packages
+```javascript
+npm install
+```
+
+3.Run this project locally
+```javascript
+yarn start
+```
