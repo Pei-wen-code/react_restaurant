@@ -49,7 +49,7 @@ This project is inspired by [one of my assignment](https://github.com/Lidemy/men
 * react-stripe-checkout // Stripe API which manages payment
 * swiper // An UI component creating carousel effect for customers' review
 * react-router-hash-link // Same-page-navigation that is used when admin is editing the menu
-* Heroku // Deploy to heroku
+* Heroku // Deployed to heroku
 
 # Content
 * Customers
