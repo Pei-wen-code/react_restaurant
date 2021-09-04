@@ -37,7 +37,7 @@ This project is inspired by [one of my assignment](https://github.com/Lidemy/men
   - can edit or delete existing bookings
   - can create, edit and delete items in the menu
 
-# Technical skills
+# Technology used
 * Create React APP // Creating a React app and its environment
 * React hooks // Management of UI components
 * React Router // Management of router
