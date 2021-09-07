@@ -15,7 +15,7 @@ export default function NavBoostrap() {
     }
     return (
         <Navbar bg="light" expand="lg">
-            <Navbar.Brand to="/" as={Link}>Resturant project</Navbar.Brand>
+            <Navbar.Brand to="/" as={Link}>Restaurant project</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
