@@ -1,70 +1,102 @@
-# Getting Started with Create React App
+<p align="center">
+<img alt="favicon" src="https://res.cloudinary.com/pei7pei8luobo/image/upload/v1630420930/vegetarian_gzpvzo.svg" width="200" height="200" >
+</p>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Restaurant project - frontend
+This is an SPA website for booking a table in an imagined vegan restanrant, using React as frontend and Node.js as backend. Foodies can simply browse the menu without login and they need to register as members if they want to make a reservation. On the other hand, admin can manage not only bookings from the customers but also content of the menu.
 
-## Available Scripts
+<img width="1440" alt="retauranthome" src="https://user-images.githubusercontent.com/58638019/132412312-c88f1312-0122-471f-b370-a98a5c31d09a.png">
 
-In the project directory, you can run:
+# Demo
+[Demo](https://reactrestaurantfn.herokuapp.com/#/).
 
-### `yarn start`
+You may use the admin's login. Username: admin, password: admin12345678.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+:bangbang: I would be really appreciate if you just delete the picture you uploaded when you want to edit menu. This is due to the fact that I need those already-exist pictures to be displayed in the menu page. Thank you in advance. :smiley:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `yarn test`
+<img width="1417" alt="login" src="https://user-images.githubusercontent.com/58638019/131512764-b8afc0b4-489c-4c28-a6f1-3dd85c34b7f1.png">
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Or simply create a new account by registration.
 
-### `yarn build`
+<img width="1419" alt="register" src="https://user-images.githubusercontent.com/58638019/131512782-56af10b9-534e-49fd-bb34-488ae5102bf0.png">
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# About this project
+This project is inspired by [one of my assignment](https://github.com/Lidemy/mentor-program-4th-Pei-wen-code/tree/master/homeworks/week6) when I was learning in a [coding mentorship programme](https://github.com/Lidemy/mentor-program-4th-Pei-wen-code) with Lidemy. That is a simple homepage of an imagined restaurant where only HTML and CSS are used. Having been learning React and Node.js, I decide to create a SPA website where customers can make reservation without spending time to call restaurants. On the other hand, restaurant owners can save time to look for the availability when customers phone in, meaning they will have more time to be creative in their cuisine.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Fatures
+* Customers can
+  - browse menu
+  - register, login and logout
+  - check availability of a specific time and date
+  - make reservation accordingly
+  - pay table reservation fee once the reservation is made
+  - manage their email
+* Restaurant owners
+  - also have the above features
+  - can edit or delete existing bookings
+  - can create, edit and delete items in the menu
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Technology used
+* Create React APP // Creating a React app and its environment
+* React hooks // Management of UI components
+* React Router // Management of router
+* React Boostrap // Creating navigation bar with RWD easily
+* styled-components // Style with CSS-in-JS components
+* react-calendar // An UI component that manage dates for booking a table
+* fetch // Communicating with back-end server (Node.js) via API
+* LocalStorage // Saving JWT token for authentication
+* react-stripe-checkout // Stripe API which manages payment
+* swiper // An UI component creating carousel effect for customers' review
+* react-router-hash-link // Same-page-navigation that is used when admin is editing the menu
+* Heroku // Deployed to heroku
 
-### `yarn eject`
+# Content
+* Customers
+<img width="1421" alt="menu" src="https://user-images.githubusercontent.com/58638019/131515265-f0af285f-d9be-46a0-bd29-c9f507e2920d.png">
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+<img width="1421" alt="reserve1" src="https://user-images.githubusercontent.com/58638019/131515418-0c9a4ffa-c037-417c-a2f7-e21e8e9c1aae.png">
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<img width="1418" alt="reserve2" src="https://user-images.githubusercontent.com/58638019/131515478-0a150988-643d-4806-a9b1-59ca052c2d48.png">
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+<img width="1413" alt="reserve3" src="https://user-images.githubusercontent.com/58638019/131515517-beb66d88-0821-4716-a60a-9a09ac25923e.png">
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+<img width="1420" alt="reserve4" src="https://user-images.githubusercontent.com/58638019/131515704-7c63b7cd-f3ac-4f45-b5d0-3cc6c96daff0.png">
 
-## Learn More
+<img width="1420" alt="myreserve1" src="https://user-images.githubusercontent.com/58638019/131515588-aa05c266-23e3-4d02-afd5-4e27559a4c60.png">
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<img width="1418" alt="myreserve2" src="https://user-images.githubusercontent.com/58638019/131515640-b6d9e408-0c7c-4010-b405-209e612c78d4.png">
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<img width="1417" alt="stripepay" src="https://user-images.githubusercontent.com/58638019/131515820-5e193fde-5aa9-47b1-8ffd-da9321f5b3d0.png">
 
-### Code Splitting
+* Restaurant owners 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+<img width="1418" alt="adminmenu1" src="https://user-images.githubusercontent.com/58638019/131515884-718bfe15-c80b-464e-8a3c-18cfe0e74346.png">
 
-### Analyzing the Bundle Size
+<img width="1417" alt="adminmenu2" src="https://user-images.githubusercontent.com/58638019/131515940-c84092ff-20b9-43f4-81d9-32e44ad3623f.png">
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<img width="1418" alt="adminreserve" src="https://user-images.githubusercontent.com/58638019/131515995-ba6292c6-fab4-421e-b5f4-bfd166daef6b.png">
 
-### Making a Progressive Web App
+# Resources
+[Unsplash](https://unsplash.com)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+[Flaticon](https://www.flaticon.com)
 
-### Advanced Configuration
+# Declaration
+This website is only for prectice and learning, not for any business use.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# Installing
+1. Clone this repository
+```javascript
+git clone https://github.com/Pei-wen-code/react_restaurant
+```
 
-### Deployment
+2.Install packages
+```javascript
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3.Run this project locally
+```javascript
+yarn start
+```
